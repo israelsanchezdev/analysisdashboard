@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Competitor, ColumnId } from '../types';
+import { EMPTY_INTEL } from '../types';
 
 interface CompetitorState {
   competitors: Competitor[];
@@ -37,6 +38,8 @@ export const useCompetitorStore = create<CompetitorState>()(
             { id: 'l2', label: 'LinkedIn', url: 'https://linkedin.com/company/apple', type: 'linkedin' },
             { id: 'l3', label: 'Crunchbase', url: 'https://crunchbase.com/organization/apple', type: 'crunchbase' },
           ],
+          intel: EMPTY_INTEL,
+
           columnId: 'direct',
           addedAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -61,6 +64,8 @@ export const useCompetitorStore = create<CompetitorState>()(
             { id: 'l5', label: 'GitHub', url: 'https://github.com/google', type: 'github' },
             { id: 'l6', label: 'X', url: 'https://x.com/google', type: 'twitter' },
           ],
+          intel: EMPTY_INTEL,
+
           columnId: 'direct',
           addedAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -85,6 +90,8 @@ export const useCompetitorStore = create<CompetitorState>()(
             { id: 'l8', label: 'GitHub', url: 'https://github.com/microsoft', type: 'github' },
             { id: 'l9', label: 'Crunchbase', url: 'https://crunchbase.com/organization/microsoft', type: 'crunchbase' },
           ],
+          intel: EMPTY_INTEL,
+
           columnId: 'direct',
           addedAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -109,6 +116,8 @@ export const useCompetitorStore = create<CompetitorState>()(
             { id: 'l11', label: 'LinkedIn', url: 'https://linkedin.com/company/amazon', type: 'linkedin' },
             { id: 'l12', label: 'GitHub', url: 'https://github.com/aws', type: 'github' },
           ],
+          intel: EMPTY_INTEL,
+
           columnId: 'indirect',
           addedAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -132,6 +141,8 @@ export const useCompetitorStore = create<CompetitorState>()(
             { id: 'l13', label: 'X', url: 'https://x.com/tesla', type: 'twitter' },
             { id: 'l14', label: 'Crunchbase', url: 'https://crunchbase.com/organization/tesla-motors', type: 'crunchbase' },
           ],
+          intel: EMPTY_INTEL,
+
           columnId: 'watching',
           addedAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -156,6 +167,8 @@ export const useCompetitorStore = create<CompetitorState>()(
             { id: 'l16', label: 'GitHub', url: 'https://github.com/meta', type: 'github' },
             { id: 'l17', label: 'X', url: 'https://x.com/meta', type: 'twitter' },
           ],
+          intel: EMPTY_INTEL,
+
           columnId: 'watching',
           addedAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -203,7 +216,7 @@ export const useCompetitorStore = create<CompetitorState>()(
           return { competitors: items };
         }),
     }),
-    { name: 'competitors-storage-v2' }
+    { name: 'competitors-storage-v3' }
   )
 );
 

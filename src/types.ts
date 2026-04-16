@@ -24,6 +24,17 @@ export interface QuickLink {
   type: QuickLinkType;
 }
 
+export interface CompanyIntel {
+  location: string;
+  founded: string;
+  employees: string;
+  revenue: string;
+}
+
+export const EMPTY_INTEL: CompanyIntel = {
+  location: '', founded: '', employees: '', revenue: '',
+};
+
 export interface Competitor {
   id: string;
   name: string;
@@ -35,6 +46,7 @@ export interface Competitor {
   threatLevel: ThreatLevel;
   swot: SwotAnalysis;
   links: QuickLink[];
+  intel: CompanyIntel;
   columnId: ColumnId;
   addedAt: string;
   updatedAt: string;

@@ -1,13 +1,16 @@
 import { useState, useCallback } from 'react';
 
 export interface NewsItem {
-  objectID: string;
+  id: string;
   title: string;
-  url: string | null;
-  author: string;
-  points: number;
-  created_at: string;
-  num_comments: number;
+  url: string;
+  source: string;
+  publishedAt: string;
+}
+
+function rss2jsonUrl(query: string) {
+  const googleRss = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=en-US&gl=US&ceid=US:en`;
+  return `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(googleRss)}&count=8`;
 }
 
 export function useCompanyNews(companyName: string) {
@@ -21,13 +24,21 @@ export function useCompanyNews(companyName: string) {
     setLoading(true);
     setError('');
     try {
-      const thirtyDaysAgo = Math.floor((Date.now() - 30 * 24 * 60 * 60 * 1000) / 1000);
-      const res = await globalThis.fetch(
-        `https://hn.algolia.com/api/v1/search?query=${encodeURIComponent(companyName)}&tags=story&hitsPerPage=8&numericFilters=created_at_i>${thirtyDaysAgo}`
-      );
+      const res = await globalThis.fetch(rss2jsonUrl(companyName));
       if (!res.ok) throw new Error('Failed to fetch');
       const data = await res.json();
-      setItems(data.hits ?? []);
+      if (data.status !== 'ok') throw new Error('Feed error');
+      const mapped: NewsItem[] = (data.items ?? []).map((item: {
+        guid?: string; title?: string; link?: string;
+        author?: string; pubDate?: string;
+      }) => ({
+        id: item.guid ?? item.link ?? Math.random().toString(),
+        title: item.title ?? '',
+        url: item.link ?? '',
+        source: item.author ?? 'Google News',
+        publishedAt: item.pubDate ?? '',
+      }));
+      setItems(mapped);
       setFetched(true);
     } catch {
       setError('Could not load news');

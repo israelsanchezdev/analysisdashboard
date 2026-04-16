@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { X, Plus, Loader2, Sparkles, ExternalLink, Trash2 } from 'lucide-react';
-import type { Competitor, ColumnId, Tag, ThreatLevel, QuickLink, QuickLinkType, SwotAnalysis } from '../types';
-import { COLUMNS, THREAT_COLORS, THREAT_LABELS, QUICK_LINK_PRESETS } from '../types';
+import type { Competitor, ColumnId, Tag, ThreatLevel, QuickLink, QuickLinkType, SwotAnalysis, CompanyIntel } from '../types';
+import { COLUMNS, THREAT_COLORS, THREAT_LABELS, QUICK_LINK_PRESETS, EMPTY_INTEL } from '../types';
 import { useCompetitorStore, EMPTY_SWOT } from '../store/useCompetitorStore';
 import { fetchWikipediaSummary } from '../hooks/useWikipediaSummary';
 
@@ -32,6 +32,7 @@ export default function CompetitorModal({ open, onClose, defaultColumn = 'watchi
   const [wikiLoading, setWikiLoading] = useState(false);
 
   const [swot, setSwot] = useState<SwotAnalysis>(EMPTY_SWOT);
+  const [intel, setIntel] = useState<CompanyIntel>(EMPTY_INTEL);
 
   const [links, setLinks] = useState<QuickLink[]>([]);
   const [linkType, setLinkType] = useState<QuickLinkType>('pricing');
@@ -49,10 +50,11 @@ export default function CompetitorModal({ open, onClose, defaultColumn = 'watchi
       setThreatLevel(editing.threatLevel ?? 3);
       setSwot(editing.swot ?? EMPTY_SWOT);
       setLinks(editing.links ?? []);
+      setIntel(editing.intel ?? EMPTY_INTEL);
     } else {
       setName(''); setUrl(prefillUrl || ''); setDescription(''); setNotes('');
       setColumnId(defaultColumn); setTags([]); setThreatLevel(3);
-      setSwot(EMPTY_SWOT); setLinks([]);
+      setSwot(EMPTY_SWOT); setLinks([]); setIntel(EMPTY_INTEL);
     }
     setTagInput(''); setTagColor(TAG_COLORS[0]);
     setLinkType('pricing'); setLinkUrl(''); setLinkLabel('');
@@ -90,7 +92,7 @@ export default function CompetitorModal({ open, onClose, defaultColumn = 'watchi
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const favicon = `https://www.google.com/s2/favicons?domain=${url}&sz=32`;
-    const payload = { name, url, favicon, description, notes, columnId, tags, threatLevel, swot, links };
+    const payload = { name, url, favicon, description, notes, columnId, tags, threatLevel, swot, links, intel };
     if (editing) updateCompetitor(editing.id, payload);
     else addCompetitor(payload);
     onClose();
@@ -181,6 +183,29 @@ export default function CompetitorModal({ open, onClose, defaultColumn = 'watchi
                   <textarea value={description} onChange={(e) => setDescription(e.target.value)}
                     placeholder="What they do, target market…" rows={2}
                     className="w-full bg-surface-700 border border-surface-600 text-white rounded-lg px-3 py-2 text-sm placeholder-surface-500 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/30 transition resize-none" />
+                </div>
+
+                {/* Intel fields */}
+                <div>
+                  <label className="block text-xs text-surface-500 mb-2">Company Intel</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {([
+                      { key: 'location',  placeholder: 'e.g. Austin, TX',   label: '📍 Location' },
+                      { key: 'founded',   placeholder: 'e.g. 2018',          label: '📅 Founded' },
+                      { key: 'employees', placeholder: 'e.g. 50–200',        label: '👥 Employees' },
+                      { key: 'revenue',   placeholder: 'e.g. ~$5M/yr',       label: '💰 Revenue' },
+                    ] as const).map(({ key, placeholder, label }) => (
+                      <div key={key}>
+                        <label className="block text-[10px] text-surface-500 mb-1">{label}</label>
+                        <input
+                          value={intel[key]}
+                          onChange={(e) => setIntel((p) => ({ ...p, [key]: e.target.value }))}
+                          placeholder={placeholder}
+                          className="w-full bg-surface-700 border border-surface-600 text-white rounded-lg px-3 py-1.5 text-xs placeholder-surface-500 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/30 transition"
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 <div>

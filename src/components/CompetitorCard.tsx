@@ -4,7 +4,7 @@ import { CSS } from '@dnd-kit/utilities';
 import {
   ExternalLink, Trash2, GripVertical, Pencil,
   Rss, Loader2, AlertCircle, ChevronDown, ChevronUp,
-  MessageSquare, TrendingUp, LayoutGrid,
+  LayoutGrid, MapPin, Calendar, Users, DollarSign,
 } from 'lucide-react';
 import type { Competitor, ThreatLevel } from '../types';
 import { THREAT_COLORS, THREAT_LABELS, QUICK_LINK_PRESETS } from '../types';
@@ -125,6 +125,32 @@ export default function CompetitorCard({ competitor, onEdit }: Props) {
         <p className="px-3 pb-2 text-xs text-surface-500 leading-relaxed line-clamp-2">{competitor.description}</p>
       )}
 
+      {/* Intel strip */}
+      {competitor.intel && Object.values(competitor.intel).some(Boolean) && (
+        <div className="px-3 pb-2.5 flex flex-wrap gap-x-3 gap-y-1">
+          {competitor.intel.location && (
+            <span className="flex items-center gap-1 text-[11px] text-surface-500">
+              <MapPin className="w-3 h-3" /> {competitor.intel.location}
+            </span>
+          )}
+          {competitor.intel.founded && (
+            <span className="flex items-center gap-1 text-[11px] text-surface-500">
+              <Calendar className="w-3 h-3" /> {competitor.intel.founded}
+            </span>
+          )}
+          {competitor.intel.employees && (
+            <span className="flex items-center gap-1 text-[11px] text-surface-500">
+              <Users className="w-3 h-3" /> {competitor.intel.employees}
+            </span>
+          )}
+          {competitor.intel.revenue && (
+            <span className="flex items-center gap-1 text-[11px] text-surface-500">
+              <DollarSign className="w-3 h-3" /> {competitor.intel.revenue}
+            </span>
+          )}
+        </div>
+      )}
+
       {/* Quick Links */}
       {competitor.links && competitor.links.length > 0 && (
         <div className="px-3 pb-2.5 flex flex-wrap gap-1.5">
@@ -208,23 +234,21 @@ export default function CompetitorCard({ competitor, onEdit }: Props) {
           {items.length > 0 && (
             <ul className="divide-y divide-surface-600">
               {items.map((item) => (
-                <li key={item.objectID} className="px-3 py-2.5">
-                  <a href={item.url ?? `https://news.ycombinator.com/item?id=${item.objectID}`}
-                    target="_blank" rel="noopener noreferrer"
+                <li key={item.id} className="px-3 py-2.5">
+                  <a href={item.url} target="_blank" rel="noopener noreferrer"
                     className="text-xs text-white hover:text-accent transition leading-snug block mb-1">
                     {item.title}
                   </a>
                   <div className="flex items-center gap-2 text-xs text-surface-500">
-                    <span className="flex items-center gap-0.5"><TrendingUp className="w-2.5 h-2.5" /> {item.points ?? 0}</span>
-                    <span className="flex items-center gap-0.5"><MessageSquare className="w-2.5 h-2.5" /> {item.num_comments ?? 0}</span>
-                    <span className="ml-auto">{timeAgo(item.created_at)}</span>
+                    <span className="truncate">{item.source}</span>
+                    <span className="ml-auto flex-shrink-0">{timeAgo(item.publishedAt)}</span>
                   </div>
                 </li>
               ))}
             </ul>
           )}
           <div className="px-3 py-1.5 text-xs text-surface-500 flex items-center justify-between border-t border-surface-600">
-            <span>Hacker News · last 30 days</span>
+            <span>Google News</span>
             <button onClick={() => fetch()} className="text-accent hover:text-accent-hover transition">Refresh</button>
           </div>
         </div>
