@@ -1,7 +1,8 @@
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Plus } from 'lucide-react';
-import type { Competitor, Column } from '../types';
+import type { Competitor, Column, ThreatLevel } from '../types';
+import { THREAT_COLORS } from '../types';
 import CompetitorCard from './CompetitorCard';
 
 interface Props {
@@ -14,36 +15,38 @@ interface Props {
 export default function KanbanColumn({ column, competitors, onAdd, onEdit }: Props) {
   const { setNodeRef, isOver } = useDroppable({ id: column.id });
 
+  const avgThreat = competitors.length
+    ? Math.round(competitors.reduce((sum, c) => sum + (c.threatLevel ?? 3), 0) / competitors.length) as ThreatLevel
+    : null;
+
   return (
     <div className="flex flex-col w-80 flex-shrink-0">
       {/* Column header */}
       <div className="flex items-center justify-between mb-3 px-1">
         <div className="flex items-center gap-2">
-          <span
-            className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-            style={{ backgroundColor: column.color }}
-          />
+          <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: column.color }} />
           <h3 className="text-sm font-medium text-white">{column.title}</h3>
           <span className="text-xs text-surface-500 bg-surface-700 px-1.5 py-0.5 rounded-full">
             {competitors.length}
           </span>
+          {avgThreat !== null && (
+            <span className="text-xs px-1.5 py-0.5 rounded-full font-medium"
+              style={{ color: THREAT_COLORS[avgThreat], backgroundColor: `${THREAT_COLORS[avgThreat]}20` }}
+              title={`Avg threat: ${avgThreat}/5`}>
+              ⚠ {avgThreat}/5
+            </span>
+          )}
         </div>
-        <button
-          onClick={onAdd}
-          className="p-1 text-surface-500 hover:text-white hover:bg-surface-700 rounded transition"
-          title="Add competitor"
-        >
+        <button onClick={onAdd} className="p-1 text-surface-500 hover:text-white hover:bg-surface-700 rounded transition" title="Add competitor">
           <Plus className="w-4 h-4" />
         </button>
       </div>
 
       {/* Drop zone */}
-      <div
-        ref={setNodeRef}
+      <div ref={setNodeRef}
         className={`flex-1 min-h-[200px] rounded-lg p-2 transition-colors ${
           isOver ? 'bg-surface-700/60 border border-dashed border-surface-500' : 'bg-surface-800/40'
-        }`}
-      >
+        }`}>
         <SortableContext items={competitors.map((c) => c.id)} strategy={verticalListSortingStrategy}>
           <div className="flex flex-col gap-2">
             {competitors.map((c) => (
