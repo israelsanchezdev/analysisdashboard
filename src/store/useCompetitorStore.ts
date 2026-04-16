@@ -203,7 +203,7 @@ export const useCompetitorStore = create<CompetitorState>()(
           return { competitors: items };
         }),
     }),
-    { name: 'competitors-storage' }
+    { name: 'competitors-storage-v2' }
   )
 );
 
