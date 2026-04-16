@@ -92,7 +92,7 @@ export default function CompetitorModal({ open, onClose, defaultColumn = 'watchi
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const favicon = `https://www.google.com/s2/favicons?domain=${url}&sz=32`;
-    const payload = { name, url, favicon, description, notes, columnId, tags, threatLevel, swot, links, intel };
+    const payload = { name, url, favicon, description, notes, columnId, tags, threatLevel, swot, links, intel, activityLog: editing?.activityLog ?? [], metrics: editing?.metrics ?? [] };
     if (editing) updateCompetitor(editing.id, payload);
     else addCompetitor(payload);
     onClose();

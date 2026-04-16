@@ -39,6 +39,8 @@ export const useCompetitorStore = create<CompetitorState>()(
             { id: 'l3', label: 'Crunchbase', url: 'https://crunchbase.com/organization/apple', type: 'crunchbase' },
           ],
           intel: EMPTY_INTEL,
+          activityLog: [],
+          metrics: [],
 
           columnId: 'direct',
           addedAt: new Date().toISOString(),
@@ -65,6 +67,8 @@ export const useCompetitorStore = create<CompetitorState>()(
             { id: 'l6', label: 'X', url: 'https://x.com/google', type: 'twitter' },
           ],
           intel: EMPTY_INTEL,
+          activityLog: [],
+          metrics: [],
 
           columnId: 'direct',
           addedAt: new Date().toISOString(),
@@ -91,6 +95,8 @@ export const useCompetitorStore = create<CompetitorState>()(
             { id: 'l9', label: 'Crunchbase', url: 'https://crunchbase.com/organization/microsoft', type: 'crunchbase' },
           ],
           intel: EMPTY_INTEL,
+          activityLog: [],
+          metrics: [],
 
           columnId: 'direct',
           addedAt: new Date().toISOString(),
@@ -117,6 +123,8 @@ export const useCompetitorStore = create<CompetitorState>()(
             { id: 'l12', label: 'GitHub', url: 'https://github.com/aws', type: 'github' },
           ],
           intel: EMPTY_INTEL,
+          activityLog: [],
+          metrics: [],
 
           columnId: 'indirect',
           addedAt: new Date().toISOString(),
@@ -142,6 +150,8 @@ export const useCompetitorStore = create<CompetitorState>()(
             { id: 'l14', label: 'Crunchbase', url: 'https://crunchbase.com/organization/tesla-motors', type: 'crunchbase' },
           ],
           intel: EMPTY_INTEL,
+          activityLog: [],
+          metrics: [],
 
           columnId: 'watching',
           addedAt: new Date().toISOString(),
@@ -168,6 +178,8 @@ export const useCompetitorStore = create<CompetitorState>()(
             { id: 'l17', label: 'X', url: 'https://x.com/meta', type: 'twitter' },
           ],
           intel: EMPTY_INTEL,
+          activityLog: [],
+          metrics: [],
 
           columnId: 'watching',
           addedAt: new Date().toISOString(),
@@ -216,7 +228,7 @@ export const useCompetitorStore = create<CompetitorState>()(
           return { competitors: items };
         }),
     }),
-    { name: 'competitors-storage-v3' }
+    { name: 'competitors-storage-v4' }
   )
 );
 
