@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   DndContext,
@@ -10,7 +10,7 @@ import {
   type DragEndEvent,
   type DragOverEvent,
 } from '@dnd-kit/core';
-import { TrendingUp, LogOut, Search, Plus, Link } from 'lucide-react';
+import { TrendingUp, LogOut, Search, Plus, ArrowRight } from 'lucide-react';
 import type { Competitor, ColumnId } from '../types';
 import { COLUMNS } from '../types';
 import { useCompetitorStore } from '../store/useCompetitorStore';
@@ -29,7 +29,7 @@ export default function Dashboard() {
   const [modalOpen, setModalOpen] = useState(false);
   const [defaultColumn, setDefaultColumn] = useState<ColumnId>('watching');
   const [editingCompetitor, setEditingCompetitor] = useState<Competitor | null>(null);
-  const [isDragOver, setIsDragOver] = useState(false);
+  const [urlInput, setUrlInput] = useState('');
   const [prefillUrl, setPrefillUrl] = useState('');
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
@@ -85,18 +85,17 @@ export default function Dashboard() {
     setModalOpen(true);
   }
 
-  // URL/link drop onto the board
-  const handleBoardDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(false);
-    const url = e.dataTransfer.getData('text/uri-list') || e.dataTransfer.getData('text/plain');
-    if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
-      setPrefillUrl(url);
-      setEditingCompetitor(null);
-      setDefaultColumn('watching');
-      setModalOpen(true);
-    }
-  }, []);
+  function handleUrlSubmit(e?: React.FormEvent) {
+    e?.preventDefault();
+    const raw = urlInput.trim();
+    if (!raw) return;
+    const url = raw.startsWith('http') ? raw : `https://${raw}`;
+    setPrefillUrl(url);
+    setUrlInput('');
+    setEditingCompetitor(null);
+    setDefaultColumn('watching');
+    setModalOpen(true);
+  }
 
   const totalCount = competitors.length;
   const directCount = competitors.filter((c) => c.columnId === 'direct').length;
@@ -154,22 +153,25 @@ export default function Dashboard() {
         </div>
       </header>
 
-      {/* URL drop hint */}
-      <div
-        className={`mx-6 mt-4 flex items-center gap-2 px-4 py-2.5 rounded-lg border text-sm transition-all ${
-          isDragOver
-            ? 'bg-accent/10 border-accent text-accent'
-            : 'bg-surface-800/40 border-dashed border-surface-600 text-surface-500'
-        }`}
-        onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
-        onDragLeave={() => setIsDragOver(false)}
-        onDrop={handleBoardDrop}
-      >
-        <Link className="w-4 h-4 flex-shrink-0" />
-        {isDragOver
-          ? 'Drop the link to add a competitor'
-          : 'Drag & drop a link here to instantly add a competitor, or drag cards between columns below'}
-      </div>
+      {/* URL quick-add bar */}
+      <form onSubmit={handleUrlSubmit} className="mx-6 mt-4 flex items-center gap-2">
+        <div className="relative flex-1">
+          <input
+            value={urlInput}
+            onChange={(e) => setUrlInput(e.target.value)}
+            placeholder="Paste or type a competitor URL to add instantly… e.g. stripe.com"
+            className="w-full bg-surface-800 border border-surface-600 text-white rounded-lg pl-4 pr-3 py-2 text-sm placeholder-surface-500 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/30 transition"
+          />
+        </div>
+        <button
+          type="submit"
+          disabled={!urlInput.trim()}
+          className="flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 disabled:opacity-40 disabled:cursor-not-allowed border border-surface-600 text-white text-sm px-3 py-2 rounded-lg transition flex-shrink-0"
+        >
+          <ArrowRight className="w-4 h-4" />
+          Add
+        </button>
+      </form>
 
       {/* Board */}
       <main className="flex-1 px-6 py-5 overflow-x-auto">
