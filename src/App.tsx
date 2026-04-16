@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './store/useAuthStore';
+import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 
@@ -12,14 +13,15 @@ export default function App() {
   const user = useAuthStore((s) => s.user);
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/analysisdashboard">
       <Routes>
+        <Route path="/" element={<Landing />} />
         <Route
           path="/login"
-          element={user ? <Navigate to="/" replace /> : <Login />}
+          element={user ? <Navigate to="/app" replace /> : <Login />}
         />
         <Route
-          path="/"
+          path="/app"
           element={
             <RequireAuth>
               <Dashboard />

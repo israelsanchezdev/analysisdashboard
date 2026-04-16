@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   DndContext,
   DragOverlay,
@@ -21,6 +22,7 @@ import CompetitorModal from '../components/CompetitorModal';
 export default function Dashboard() {
   const { competitors, moveCompetitor, reorderCompetitors } = useCompetitorStore();
   const { user, logout } = useAuthStore();
+  const navigate = useNavigate();
 
   const [activeId, setActiveId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
@@ -143,7 +145,7 @@ export default function Dashboard() {
           <img src={user?.avatar} alt={user?.name} className="w-7 h-7 rounded-full" />
           <span className="text-sm text-white hidden sm:block">{user?.name}</span>
           <button
-            onClick={logout}
+            onClick={() => { logout(); navigate('/'); }}
             className="p-1.5 text-surface-500 hover:text-white transition"
             title="Sign out"
           >
